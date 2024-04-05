@@ -52,16 +52,16 @@ fn main() -> io::Result<()> {
         }
     }
 
-    if byte_counter.count != 0 {
+    if byte_counter.count() != 0 {
         let idx: usize = (ac.byteval() << (6 - ac.bits())).into();
         print!("{}", &b64a[idx..idx + 1]);
 
-        let count = (3 - byte_counter.count) * 8 / 6;
+        let count = (3 - byte_counter.count()) * 8 / 6;
         for _ in 0..count {
             print!("=");
         }
 
-        if wrap_counter.count != 0 {
+        if wrap_counter.count() != 0 {
             print!("\n");
         }
     }

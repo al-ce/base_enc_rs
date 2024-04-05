@@ -36,11 +36,15 @@ pub fn get_lines(filename: String) -> Box<dyn Iterator<Item = io::Result<String>
 }
 
 pub struct Counter {
-    pub count: usize,
+    count: usize,
     limit: usize,
 }
 
 impl Counter {
+    pub fn count(&self) -> usize {
+        self.count
+    }
+
     pub fn build(limit: usize) -> Counter {
         Counter { count: 0, limit }
     }
