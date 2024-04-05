@@ -81,11 +81,6 @@ impl Counter {
         self.count
     }
 
-    // pub fn reset_count(&mut self) {
-    //     self.count = 0
-
-    // }
-
     pub fn build(chunk_size: usize) -> Counter {
         Counter {
             count: 0,
@@ -96,10 +91,6 @@ impl Counter {
     pub fn increment(&mut self) {
         self.count += 1;
     }
-
-    // pub fn exceeded_limit(&mut self, limit: usize) -> bool {
-    //     self.count >= limit
-    // }
 
     pub fn check_reset(&mut self) -> bool {
         if self.count >= self.limit {

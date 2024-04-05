@@ -2,7 +2,7 @@ use std::env;
 use std::io::{self};
 use std::process;
 
-const BASE: usize = 64;
+const BASE: usize = 64; // could also work for base 32
 const BASE_EXP: usize = base64_rs::log(BASE); // e.g. base16: 4, base32: 5, base64: 6
 const CHUNK_SIZE: usize = base64_rs::get_byte_chunk_size(BASE_EXP);
 const WRAP_LIMIT: usize = 76;
@@ -32,7 +32,6 @@ fn main() -> io::Result<()> {
     for line in lines {
         let line = line.unwrap();
         for byte in line.bytes() {
-
             byte_counter.increment();
             byte_counter.check_reset();
 
@@ -50,7 +49,7 @@ fn main() -> io::Result<()> {
 
                 wrap_counter.increment();
                 if wrap_counter.check_reset() {
-                    print!("\n")
+                    print!("\n");
                 }
             }
 
