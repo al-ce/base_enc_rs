@@ -11,7 +11,7 @@ impl ParsedArgs {
         let len = args.len();
         if len == 1 || len > 3 {
             return Err(
-                "Need target base and optionally a filename as arguments.\nExample: bxx 64 hello.c",
+                "Need target base and optionally a filename as arguments.\nExample: base_enc_rs 64 hello.c",
             );
         }
 
