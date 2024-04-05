@@ -37,10 +37,11 @@ fn main() -> io::Result<()> {
 
             while ac.bits() >= BASE_MULTIPLIER {
                 ac.bits -= BASE_MULTIPLIER;
-                let idx: usize = (ac.byteval() >> ac.bits()).into();
-                ac.mask_off_bits();
 
+                let idx: usize = (ac.byteval() >> ac.bits()).into();
                 print!("{}", &b64a[idx..idx + 1]);
+
+                ac.mask_off_bits();
 
                 wrap_counter.increment();
                 if wrap_counter.check_reset() {
