@@ -4,9 +4,6 @@ use std::io::prelude::*;
 use std::io::{self};
 use std::process;
 
-const B32A: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-const B64A: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
 pub const fn log(base: usize) -> usize {
     let mut base = base;
     let mut log = 1;
@@ -58,72 +55,4 @@ pub fn get_lines(filename: String) -> Box<dyn Iterator<Item = io::Result<String>
         Box::new(io::BufReader::new(f).lines())
     };
     lines
-}
-
-pub struct BaseAlphabet {}
-impl BaseAlphabet {
-    pub fn build(base: &usize) -> Result<&str, &'static str> {
-        match base {
-            32 => Ok(B32A),
-            64 => Ok(B64A),
-            _ => Err("Base not implemented"),
-        }
-    }
-}
-
-pub struct Counter {
-    count: usize,
-    limit: usize,
-}
-
-impl Counter {
-    pub fn count(&self) -> usize {
-        self.count
-    }
-
-    pub fn build(chunk_size: usize) -> Counter {
-        Counter {
-            count: 0,
-            limit: chunk_size,
-        }
-    }
-
-    pub fn increment(&mut self) {
-        self.count += 1;
-    }
-
-    pub fn check_reset(&mut self) -> bool {
-        if self.count >= self.limit {
-            self.count = 0;
-        }
-        self.count == 0
-    }
-}
-
-pub struct Accumulator {
-    byteval: u16,
-    pub bits: usize,
-}
-
-impl Accumulator {
-    pub fn bits(&self) -> usize {
-        self.bits
-    }
-    pub fn byteval(&self) -> u16 {
-        self.byteval
-    }
-    pub fn mask_off_bits(&mut self) {
-        self.byteval &= (1 << self.bits) - 1;
-    }
-    pub fn build() -> Accumulator {
-        Accumulator {
-            byteval: 0,
-            bits: 0,
-        }
-    }
-
-    pub fn accumulate(&mut self, byteval: u16) {
-        self.byteval <<= 8;
-        self.byteval |= byteval;
-    }
 }
