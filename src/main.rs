@@ -4,6 +4,7 @@ use std::process;
 
 const WRAP_LIMIT: usize = 76;
 const BYTE_LIMIT: usize = 3;
+const BASE_MULTIPLIER: usize = 6; // e.g. base16: 4, base32: 5, base64: 6
 
 fn main() -> io::Result<()> {
     let b64a = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -20,10 +21,9 @@ fn main() -> io::Result<()> {
 
     eprintln!("Beginning base 64 encoding");
 
-    let mut ac: u16 = 0;
-    let mut ac_bits = 0;
-    let mut byte_counter = base64_rs::Counter::init(BYTE_LIMIT);
-    let mut wrap_counter = base64_rs::Counter::init(WRAP_LIMIT);
+    let mut ac = base64_rs::Accumulator::build();
+    let mut byte_counter = base64_rs::Counter::build(BYTE_LIMIT);
+    let mut wrap_counter = base64_rs::Counter::build(WRAP_LIMIT);
 
     for line in lines {
         let line = line.unwrap();
@@ -32,14 +32,13 @@ fn main() -> io::Result<()> {
             byte_counter.check_reset();
 
             let byte: u16 = (byte).into();
-            ac <<= 8;
-            ac |= byte;
-            ac_bits += 8;
+            ac.accumulate(byte);
+            ac.bits += 8;
 
-            while ac_bits >= 6 {
-                ac_bits -= 6;
-                let idx: usize = (ac >> ac_bits).into();
-                ac &= (1 << ac_bits) - 1;
+            while ac.bits() >= BASE_MULTIPLIER {
+                ac.bits -= BASE_MULTIPLIER;
+                let idx: usize = (ac.byteval() >> ac.bits()).into();
+                ac.mask_off_bits();
 
                 print!("{}", &b64a[idx..idx + 1]);
 
@@ -49,12 +48,12 @@ fn main() -> io::Result<()> {
                 }
             }
 
-            assert!((0..6).contains(&ac_bits));
+            assert!((0..6).contains(&ac.bits()));
         }
     }
 
     if byte_counter.count != 0 {
-        let idx: usize = (ac << (6 - ac_bits)).into();
+        let idx: usize = (ac.byteval() << (6 - ac.bits())).into();
         print!("{}", &b64a[idx..idx + 1]);
 
         let count = (3 - byte_counter.count) * 8 / 6;
