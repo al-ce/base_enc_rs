@@ -1,5 +1,5 @@
 use std::env;
-use std::io::{self};
+use std::io::{self, BufWriter, Write};
 use std::process;
 
 const BASE: usize = 64; // could also work for base 32
@@ -8,6 +8,10 @@ const CHUNK_SIZE: usize = base64_rs::get_byte_chunk_size(BASE_EXP);
 const WRAP_LIMIT: usize = 76;
 
 fn main() -> io::Result<()> {
+
+    let stdout = io::stdout();
+    let mut stdout = BufWriter::new(stdout.lock());
+
     let bxxa = base64_rs::BaseAlphabet::build(&BASE).unwrap_or_else(|err| {
         eprintln!("{}", err);
         process::exit(1);
@@ -43,13 +47,13 @@ fn main() -> io::Result<()> {
                 ac.bits -= BASE_EXP;
 
                 let idx: usize = (ac.byteval() >> ac.bits()).into();
-                print!("{}", &bxxa[idx..idx + 1]);
+                write!(stdout, "{}", &bxxa[idx..idx + 1])?;
 
                 ac.mask_off_bits();
 
                 wrap_counter.increment();
                 if wrap_counter.check_reset() {
-                    print!("\n");
+                    writeln!(stdout)?;
                 }
             }
 
@@ -65,11 +69,11 @@ fn main() -> io::Result<()> {
         for _ in 0..count {
             print!("=");
         }
-
-        if wrap_counter.count() != 0 {
-            print!("\n");
-        }
     }
+
+    writeln!(stdout)?;
+
+    stdout.flush()?;
 
     Ok(())
 }
