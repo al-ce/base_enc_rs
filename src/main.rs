@@ -32,6 +32,7 @@ fn main() -> io::Result<()> {
     for line in lines {
         let line = line.unwrap();
         for byte in line.bytes() {
+
             byte_counter.increment();
             byte_counter.check_reset();
 
@@ -48,8 +49,7 @@ fn main() -> io::Result<()> {
                 ac.mask_off_bits();
 
                 wrap_counter.increment();
-                wrap_counter.check_reset();
-                if wrap_counter.need_wrap(WRAP_LIMIT) {
+                if wrap_counter.check_reset() {
                     print!("\n")
                 }
             }

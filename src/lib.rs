@@ -73,7 +73,7 @@ impl BaseAlphabet {
 
 pub struct Counter {
     count: usize,
-    chunk_size: usize,
+    limit: usize,
 }
 
 impl Counter {
@@ -81,10 +81,15 @@ impl Counter {
         self.count
     }
 
+    // pub fn reset_count(&mut self) {
+    //     self.count = 0
+
+    // }
+
     pub fn build(chunk_size: usize) -> Counter {
         Counter {
             count: 0,
-            chunk_size,
+            limit: chunk_size,
         }
     }
 
@@ -92,14 +97,15 @@ impl Counter {
         self.count += 1;
     }
 
-    pub fn need_wrap(&mut self, wrap_limit: usize) -> bool {
-        self.count >= wrap_limit
-    }
+    // pub fn exceeded_limit(&mut self, limit: usize) -> bool {
+    //     self.count >= limit
+    // }
 
-    pub fn check_reset(&mut self) {
-        if self.count >= self.chunk_size {
+    pub fn check_reset(&mut self) -> bool {
+        if self.count >= self.limit {
             self.count = 0;
         }
+        self.count == 0
     }
 }
 
