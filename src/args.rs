@@ -10,7 +10,9 @@ impl ParsedArgs {
         let args: Vec<String> = env::args().collect();
         let len = args.len();
         if len == 1 || len > 3 {
-            return Err("Need one or two arguments");
+            return Err(
+                "Need target base and optionally a filename as arguments.\nExample: bxx 64 hello.c",
+            );
         }
 
         let base_arg = &args[1];
@@ -18,7 +20,7 @@ impl ParsedArgs {
             Ok(num) => match num {
                 32 => 32,
                 64 => 64,
-                _ => return Err("Invalid base")
+                _ => return Err("Invalid base"),
             },
             Err(_) => return Err("Could not parse base arg"),
         };
